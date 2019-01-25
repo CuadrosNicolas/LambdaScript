@@ -1,0 +1,11 @@
+RevAppend@\X,Y.
+	unify X with
+		| []	-> Y
+		| A::B	-> RevAppend B (A::Y)
+;
+
+Rev\X.
+	RevAppend X []
+;
+
+print( Rev (1::2::3::[]) )
