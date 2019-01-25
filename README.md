@@ -129,7 +129,7 @@ The langugage is not yet fully working, here is the list of the next features to
 
 ## Built With
 
-* [OCaml](https://ocaml.org/docs/install.html) - The web framework used
+* [OCaml](https://ocaml.org/docs/install.html) 
 
 
 
