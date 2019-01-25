@@ -82,7 +82,7 @@ Lambdas are also possible by juste omitting the name.
 
 #### Recursion
 
-Recursive function can be defined by add a '@' after the name of the function.
+Recursive function can be defined by adding '@' after the name of the function.
 For example, here is the implementation of the reverse function from ocaml into last :
 
 ![alt text](Ressources/example_recursion.png "Recursion example")
@@ -136,7 +136,7 @@ The langugage is not yet fully working, here is the list of the next features to
 
 ## Authors
 
-* **[Cuadros Nicolas](https://github.com/CuadrosNicolas)** - *Initial work*
+* **[Cuadros Nicolas](https://github.com/CuadrosNicolas)** 
 
 
 
