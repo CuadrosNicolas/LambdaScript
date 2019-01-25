@@ -39,6 +39,10 @@ last ./Examples/array.last
 
 The language is inspired by OCaml, Prolog and python abut his syntax is mostly taken from OCaml.
 
+### Functional
+
+This language is purely functional, which mean you can't make any affectation(except for printing).
+
 ### Basic types
 
 - Int : 12
@@ -52,7 +56,7 @@ The language is inspired by OCaml, Prolog and python abut his syntax is mostly t
 ### Basic operations
 
 - print : printing operation
-- \+ : addition / concatenation for list
+- \+ : addition between int or float/ concatenation for list
 - \- : substraction
 - \* : multiplication
 - /  : division
@@ -98,6 +102,11 @@ Pattern matching work exactly like OCaml but only one difference, you can specif
 Will print false, since the composant of a(1,2) are not the same.
 You can use the '_' to specify an any value to match everything.
 
+## Syntax highlighting
+
+If you want to have a simple syntax highlighting for testing in the best condition, check out this extension for Visual studio code :
+
+https://github.com/CuadrosNicolas/ambda-script-syntax-highlighting
 
 ## ToDos
 
@@ -113,6 +122,8 @@ The langugage is not yet fully working, here is the list of the next features to
 - [ ] Regex matching for strings
 - [ ] Syntaxic sugar for building list
 - [ ] Hastable data structure
+- [ ] Static analysis in order to get informations about the program
+- [ ] Adding information in case of failure while executing a script
 - [ ] JSON file loading
 - [ ] Calling python program
 
