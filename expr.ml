@@ -30,6 +30,7 @@ type expr =
 	| Div 		of expr * expr
 	| Mult 		of expr * expr
 	| Inf 		of expr * expr
+	| Mod		of expr * expr
 	(*Comparison operators *)
 	| Infeq 	of expr * expr
 	| Sup 		of expr * expr
@@ -84,6 +85,7 @@ let rec ident_in exp name =
     | NamedExp (_,e,s) -> ident_in  e name || ident_in s name
     | App (e1,e2) -> ident_in  e1 name || ident_in  e2 name
     | Add (e1,e2) -> ident_in  e1 name || ident_in  e2 name
+	| Mod (e1,e2) -> ident_in  e1 name || ident_in  e2 name
     | Sub (e1,e2) -> ident_in  e1 name || ident_in  e2 name
     | Mult (e1,e2) -> ident_in  e1 name || ident_in  e2 name
     | Div (e1,e2) -> ident_in  e1 name || ident_in  e2 name
@@ -174,6 +176,7 @@ let rec toString e count =
 		| RecFun (n,x, b,a) 	-> "rec@"^n^" : " ^ x ^ " -> " ^"\n"^toString b (count+1)^"\n"^ toString a count
 		| NamedExp (n,b,a) 		-> "Exp@"^n^" : " ^ " -> " ^"\n"^toString b (count+1)^"\n"^ toString a count
 		| Add (e1,e2) 			-> opString e1 e2 "+"
+		| Mod (e1,e2) 			-> opString e1 e2 "%"
 		| Mult (e1,e2) 			-> opString e1 e2 "*"
 		| Div (e1,e2) 			-> opString e1 e2 "/"
 		| Eq (e1,e2)  			-> opString e1 e2 "="

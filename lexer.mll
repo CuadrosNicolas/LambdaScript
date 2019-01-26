@@ -49,6 +49,7 @@
     | '+'           {PLUS}
     | '-'           {SUB}
     | '/'           {DIV}
+    | '%'           {MODULO}
     | '*'           {MULT}
     | '_'           {ANY}
     | eof            { EOF }

@@ -23,6 +23,7 @@ let rec is_prog e = match e with
     | NamedFun (_,_,e,s) -> is_prog  e && is_prog s
     | NamedExp (_,e,s) -> is_prog  e && is_prog s
     | App (e1,e2) -> is_prog  e1 && is_prog  e2
+    | Mod(e1,e2) -> is_prog  e1 && is_prog  e2
     | Add (e1,e2) -> is_prog  e1 && is_prog  e2
     | Sub (e1,e2) -> is_prog  e1 && is_prog  e2
     | Mult (e1,e2) -> is_prog  e1 && is_prog  e2
@@ -74,6 +75,7 @@ let rec substVar  x v e =
         then begin Fun(ve,part e) end
         else RecFun(n,ve,e,part s)
     | Add (e1, e2) -> Add(part e1, part e2)
+    | Mod (e1, e2) -> Mod(part e1, part e2)
     | Mult (e1, e2) -> Mult(part e1, part e2)
     | Div (e1, e2) -> Div(part e1, part e2)
     | Sub (e1, e2) -> Sub(part e1, part e2)
@@ -180,6 +182,12 @@ let try_unify expr pattern =
     end
 
 
+let rec concat a b =
+    match a with
+    | Arr_End -> b
+    | Node(h,t) -> Node(h,(concat t b))
+    | _ -> failwith "Concatenation impossible"
+
 
 
 let rec eval ex =
@@ -214,7 +222,7 @@ let rec eval ex =
                     (Bool i1, Bool i2) -> Bool( op i1 i2 )
             | (Any,_) -> Bool true
             | (_,Any) -> Bool true
-            | _ -> failwith "erreur de type : booléens attArr_Endus" in
+            | _ -> failwith "erreur de type : booléens attendus" in
     match ex with
     | Int f -> Int f
     | Var v ->
@@ -231,7 +239,7 @@ let rec eval ex =
                         then eval th
                         else eval el
             |  Any -> Bool true
-            | _     -> failwith "Erreur : booléen attArr_Endu"
+            | _     -> failwith "Erreur : booléen attendu"
         )
     | Add (e1,e2) ->
             (
@@ -241,7 +249,8 @@ let rec eval ex =
             | (Float i1,Int i2) ->Float(i1+.(float_of_int i2))
             | (Int i2,Float i1) ->Float(i1+.(float_of_int i2))
             | (String s1,String s2) -> String(s1 ^ s2)
-            | _ -> failwith "erreur de type : nombres attArr_Endus"
+            | (Node(a,b),Node(c,d)) -> concat e1 e2
+            | _ -> failwith "erreur de type : nombres attendus"
             )
     | Mult (e1,e2) ->
                 (
@@ -250,7 +259,7 @@ let rec eval ex =
             | (Float i1,Float i2) ->Float(i1*.i2)
             | (Float i1,Int i2) ->Float(i1*.(float_of_int i2))
             | (Int i2,Float i1) ->Float(i1*.(float_of_int i2))
-            | _ -> failwith "erreur de type : nombres attArr_Endus"
+            | _ -> failwith "erreur de type : nombres attendus"
             )
     | Div (e1,e2) ->
             (
@@ -259,7 +268,14 @@ let rec eval ex =
             | (Float i1,Float i2) ->Float(i1/.i2)
             | (Float i1,Int i2) ->Float(i1/.(float_of_int i2))
             | (Int i2,Float i1) ->Float(i1/.(float_of_int i2))
-            | _ -> failwith "erreur de type : nombres attArr_Endus"
+            | _ -> failwith "erreur de type : nombres attendus"
+            )
+    | Mod (e1,e2) ->
+            (
+            match eval e1,eval e2 with
+            | (Int i1,Int 0) -> failwith "Erreur : modulo 0 impossible"
+            | (Int i1, Int i2) -> Int( (i1 mod i2) )
+            | _ -> failwith "erreur de type : nombres attendus"
             )
     | Sub (e1,e2) ->
             (
@@ -268,7 +284,7 @@ let rec eval ex =
             | (Float i1,Float i2) ->Float(i1-.i2)
             | (Float i1,Int i2) ->Float(i1-.(float_of_int i2))
             | (Int i2,Float i1) ->Float(i1-.(float_of_int i2))
-            | _ -> failwith "erreur de type : nombres attArr_Endus"
+            | _ -> failwith "erreur de type : nombres attendus"
             )
     | Eq (e1,e2) ->
         (

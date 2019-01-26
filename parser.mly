@@ -49,7 +49,7 @@
 %token <float> FLOAT
 %token BEGIN_FUNCTION DEFINITION END_FUNCTION
 %token EOF
-%token PLUS SUB DIV MULT LPAREN RPAREN
+%token PLUS SUB DIV MULT LPAREN RPAREN MODULO
 %token TRUE FALSE
 %token IF THEN ELSE END
 %token EQ DIFF INF INFEQ SUP SUPEQ
@@ -59,7 +59,6 @@
 %token UNIFY MATCHEX WITH ANY ARROW PIPE
 %token ARRAY_END ARRAY_LINK
 %token SEQUENCER PRINT
-%token CONCAT
 %token TOINT
 %token TOFLOAT
 %token TOSTRING
@@ -69,11 +68,10 @@
 /* gestion des priorités/associativités */
 %right TOINT TOBOOL TOFLOAT TOSTRING
 %right  SEPARATOR ARRAY_LINK SEQUENCER ATOM
-%right TAIL HEAD
 %left EQ DIFF INF INFEQ SUP SUPEQ
+%left AND OR
 %left PLUS SUB
-%left MULT DIVIDE
-%left AND OR CONCAT ATOM
+%left MULT DIVIDE MODULO ATOM
 %right NOT
 
 
@@ -97,6 +95,7 @@
   | TOBOOL   expr                  {ToBool $2}
   | TOSTRING   expr                  {ToString $2}
   | expr SEQUENCER expr      {Sequencer($1,$3)}
+  | expr MODULO expr                   { Mod($1,$3)                }
   | expr PLUS expr                   { Add($1,$3)                }
   | expr SUB expr                   { Sub($1,$3)                }
   | SUB   expr                      {Neg($2)}
