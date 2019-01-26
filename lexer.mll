@@ -34,6 +34,7 @@
     | ':'           {SEQUENCER}
     | '='           {EQ}
     | "!="          {DIFF}
+    | ":-"          {POSTCOND}
     | "&&"          {AND}
     | "||"          {OR}
     | '!'           {NOT}

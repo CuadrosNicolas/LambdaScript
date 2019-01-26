@@ -63,12 +63,13 @@
 %token TOFLOAT
 %token TOSTRING
 %token TOBOOL
+%token POSTCOND
 
 
 /* gestion des priorités/associativités */
 %right TOINT TOBOOL TOFLOAT TOSTRING
 %right  SEPARATOR ARRAY_LINK SEQUENCER ATOM
-%left EQ DIFF INF INFEQ SUP SUPEQ
+%left EQ DIFF INF INFEQ SUP SUPEQ POSTCOND
 %left AND OR
 %left PLUS SUB
 %left MULT DIVIDE MODULO ATOM
@@ -157,7 +158,8 @@
   | SEPARATOR expr        {$2}
 ;
   matchcond :
-    | PIPE expr ARROW expr {($2,$4)}
+    | PIPE expr ARROW expr {($2,$4,[])}
+    | PIPE expr POSTCOND expr ARROW expr {($2,$4,[$6])}
   ;
 
   matchlist:

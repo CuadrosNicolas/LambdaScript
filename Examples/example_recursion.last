@@ -8,4 +8,10 @@ Rev\X.
 	RevAppend X []
 ;
 
-print( 5%2)
+Test\X,Y.
+	unify X with
+	| 0 :- Y>2 -> 1
+	| _	-> "OUCH"
+;
+
+print(Test 0 3)

@@ -97,10 +97,18 @@ Expression are basically function without argument you can define them like that
 
 Pattern matching work exactly like OCaml but only one difference, you can specify a multiple time the same variable in the pattern which mean that these variables are the same, for example :
 
-![alt text](Ressources/example_pattern.png "Pattern match")
+![alt text](Ressources/example_pattern.png "Pattern matching")
 
 Will print false, since the composant of a(1,2) are not the same.
 You can use the '_' to specify an any value to match everything.
+
+Post condition are also available, these condition need to be verfied after the
+matching in order to evaluate the expression.
+
+![alt text](Ressources/example_postcond.png "Pattern matching poscondition")
+
+This example will print true since 3>2 is verified.
+
 
 ## Syntax highlighting
 
@@ -112,10 +120,10 @@ https://github.com/CuadrosNicolas/ambda-script-syntax-highlighting
 
 The langugage is not yet fully working, here is the list of the next features to come :
 
-- [ ] Postcondition for pattern matching (:- condition)
+- [X] Postcondition for pattern matching (:- condition)
 - [X] Type conversion (string int bool float)
-- [ ] String manipulation operators (/ - *)
-- [ ] Modulo operator (%)
+- [X] String manipulation operators (+)
+- [X] Modulo operator (%)
 - [ ] Exponentiation operator (**)
 - [ ] Module management (Import module)
 - [ ] Exception catching (Try Catch)

@@ -11,6 +11,7 @@ let rec is_prog e = match e with
     | TupleEnd  -> true
     | Unify(a,b) -> is_prog a && is_prog b
     | UnifyExp(a,b,c)-> is_prog a && is_prog b && is_prog c
+	| UnifyExpCond(a,b,c,d) -> is_prog a && is_prog b && is_prog c && is_prog d
     | Node(a,b) -> is_prog a && is_prog b
     | NamedTuple(n,e) -> is_prog e
     | Tuple(_,l)    -> is_prog l
@@ -100,6 +101,13 @@ let rec substVar  x v e =
         end
         else
             UnifyExp(a,part b,part c)
+	| UnifyExpCond(a,b,c,d)->
+        if ident_in a x
+        then begin
+            UnifyExpCond(a,b,c,part c)
+        end
+        else
+            UnifyExpCond(a,part b,part c,part d)
     | UEnd             -> UEnd
     | Print e -> Print(part e)
     | Sequencer(e1,e2) -> Sequencer(part e1,part e2)
@@ -214,6 +222,14 @@ let rec eval ex =
             end
             else
                 unificationOp var c
+        | UnifyExpCond(a,b,c,d) ->
+            let result = try_unify var a in
+            let cond = (eval b) in
+            if (not(result = [None]) && cond=(Bool true))
+            then
+                subAll result c
+            else
+                unificationOp var d
         | UEnd -> failwith "Erreur, pattern non capturé"
         | _    -> failwith "?"
     in
@@ -439,6 +455,7 @@ let rec eval ex =
             | _ -> eval (unificationOp a b)
         )
     | UnifyExp(a,b,c)-> failwith "?"
+    | UnifyExpCond(a,b,c,d)-> failwith "?"
     | UEnd          -> failwith "Erreur"
     | Print e       -> print_exp (eval e); UEnd
     | Sequencer(e1,e2) -> (ignore (eval e1));eval e2

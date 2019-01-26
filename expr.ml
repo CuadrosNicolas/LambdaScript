@@ -48,6 +48,7 @@ type expr =
 					(*Varible / Unifications exp *)
 	| Unify 	of expr * expr
 	| UnifyExp	of expr*expr*expr
+	| UnifyExpCond of expr*expr*expr*expr
 	| UEnd
 	(**Inbuild function*)
 	| Print    of expr
@@ -73,6 +74,7 @@ let rec ident_in exp name =
 	| TupleEnd -> false
     | Unify(a,b) -> ident_in a name || ident_in b name
     | UnifyExp(a,b,c)-> ident_in a name || ident_in b name|| ident_in c name
+    | UnifyExpCond(a,b,c,d)-> ident_in a name || ident_in b name|| ident_in c name || ident_in d name
     | Node(a,b) -> ident_in a name|| ident_in b name
 	| NamedTuple (n,s) -> ident_in s name
     | Tuple(_,l)    -> ident_in l name
@@ -110,12 +112,18 @@ let rec ident_in exp name =
 
 let rec buildUnifyStep l =
 		match l with
-		| (a,b)::tl ->
+		| (a,b,[])::tl ->
 						(
 							match a with
 								| _ 	-> UnifyExp(a,b,buildUnifyStep tl)
 						)
+		| (a,b,c::[])::tl ->
+						(
+							match a with
+								| _ 	-> UnifyExpCond(a,b,c,buildUnifyStep tl)
+						)
 		| []		-> UEnd
+		| _			-> failwith "Parsing error"
 
 let buildUnify var l =
 	Unify (var,(buildUnifyStep l))
@@ -193,6 +201,7 @@ let rec toString e count =
 		| Any         			-> "_"
 		| Unify(a,b) -> "Unify " ^ (toString a 0) ^ " with\n" ^ (toString b (count+1))
 		| UnifyExp(a,b,c)-> "| " ^ (toString a 0) ^ " -> " ^ (toString b 0) ^ "\n" ^ (toString c count)
+		| UnifyExpCond(a,b,c,d)-> "| " ^ (toString a 0) ^" :- "^(toString b 0)^ " -> " ^ (toString c 0) ^ "\n" ^ (toString d count)
 		| UEnd			-> ""
 		| Print e -> "Print("^(toString e 0)^")"
 		| Sequencer(e1,e2) -> (toString e1 0) ^ "\n: " ^ (toString e2 0)
