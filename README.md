@@ -112,15 +112,16 @@ https://github.com/CuadrosNicolas/ambda-script-syntax-highlighting
 
 The langugage is not yet fully working, here is the list of the next features to come :
 
-- [ ] Postcondition for pattern matching
-- [ ] Type conversion
-- [ ] String manipulation operators
-- [ ] Modulo operator
-- [ ] Module management
-- [ ] Exception catching
-- [ ] File read and writing
+- [ ] Postcondition for pattern matching (:- condition)
+- [X] Type conversion (string int bool float)
+- [ ] String manipulation operators (/ - *)
+- [ ] Modulo operator (%)
+- [ ] Exponentiation operator (**)
+- [ ] Module management (Import module)
+- [ ] Exception catching (Try Catch)
+- [ ] File read and writing (open close write >> <<)
 - [ ] Regex matching for strings
-- [ ] Syntaxic sugar for building list
+- [ ] Syntaxic sugar for building list ([1,2,3])
 - [ ] Hastable data structure
 - [ ] Static analysis in order to get informations about the program
 - [ ] Adding information in case of failure while executing a script
@@ -129,7 +130,7 @@ The langugage is not yet fully working, here is the list of the next features to
 
 ## Built With
 
-* [OCaml](https://ocaml.org/docs/install.html) 
+* [OCaml](https://ocaml.org/docs/install.html)
 
 
 

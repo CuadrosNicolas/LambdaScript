@@ -8,6 +8,7 @@ let rec is_prog e = match e with
     | Float _   -> true
     | String s -> true
     | Atom   _  -> true
+    | TupleEnd  -> true
     | Unify(a,b) -> is_prog a && is_prog b
     | UnifyExp(a,b,c)-> is_prog a && is_prog b && is_prog c
     | Node(a,b) -> is_prog a && is_prog b
@@ -39,6 +40,10 @@ let rec is_prog e = match e with
     | Print e -> is_prog e
     | Sequencer(e1,e2) -> is_prog e1 && is_prog e2
     | Neg e             -> is_prog e
+	| ToInt		e -> is_prog e
+	| ToFloat	e -> is_prog e
+	| ToBool	e -> is_prog e
+	| ToString	e ->is_prog e
 
 let rec substVar  x v e =
     let part = substVar  x v in
@@ -49,6 +54,7 @@ let rec substVar  x v e =
     | Float f -> Float f
     | String s -> String s
     | Atom s    -> Atom s
+    | TupleEnd  -> TupleEnd
     | Cond (cond,th,el) -> Cond(part cond,part th,part el)
     | Arr_End   -> Arr_End
     | Node(a,b) -> Node(part a,part b)
@@ -96,6 +102,10 @@ let rec substVar  x v e =
     | Print e -> Print(part e)
     | Sequencer(e1,e2) -> Sequencer(part e1,part e2)
     | Neg e             -> Neg (part e)
+	| ToInt		e -> ToInt (part e)
+	| ToFloat	e ->  ToFloat (part e)
+	| ToBool	e ->  ToBool (part e)
+	| ToString	e -> ToString (part e)
 ;;
 
 type unifier =
@@ -111,6 +121,7 @@ let rec unify expr pattern =
         | (Float a,Float b) when a=b->[Empty]
         | (String a,String b) when a=b->[Empty]
         | (Bool a,Bool b) when a=b ->  [Empty]
+        | (TupleEnd,TupleEnd)       -> [Empty]
         | (NamedTuple(n,e),NamedTuple(n2,e2)) when n=n2 -> unify e e2
         | (Tuple(na,a),Tuple(nb,b)) when na = nb -> unify a b
         | (Atom(a),Atom(b))   when a =b  -> [Empty]
@@ -422,6 +433,49 @@ let rec eval ex =
             | Float a -> Float(-.a)
             | _         -> failwith "Erreur : Nombre requis"
         )
-
+    | TupleEnd -> TupleEnd
+	| ToInt		e ->
+        (
+            match (eval e) with
+            | Int e -> Int e
+            | Float e -> Int(int_of_float e)
+            | String   e -> Int(int_of_string e)
+            | Bool true -> Int(0)
+            | Bool false -> Int(1)
+            | _ -> failwith "Erreur : entier,float,string ou booléen nécessaire"
+        )
+	| ToFloat	e ->
+        (
+            match (eval e) with
+            | Int e -> Float (float_of_int e)
+            | Float e -> Float e
+            | String   e -> Float (float_of_string e)
+            | Bool true -> Float (0.)
+            | Bool false -> Float (1.)
+            | _ -> failwith "Erreur : entier,float,string ou booléen nécessaire"
+        )
+	| ToBool	e ->
+        (
+            match (eval e) with
+            | Int 0 -> Bool false
+            | Int _ -> Bool true
+            | Float 0.0 -> Bool false
+            | Float _   -> Bool true
+            | String  "true" -> Bool true
+            | String "false" -> Bool false
+            | Bool true -> Bool true
+            | Bool false -> Bool true
+            | _ -> failwith "Erreur : entier,float,string ou booléen nécessaire"
+        )
+	| ToString e ->
+        (
+            match eval e with
+                | Int e -> String(string_of_int e)
+                | Float e -> String(string_of_float e)
+                | Bool false -> String("false")
+                | Bool true -> String("true")
+                | String e -> String(e)
+            | _ -> failwith "Erreur : entier,float,string ou booléen nécessaire"
+        )
 ;;
 

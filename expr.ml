@@ -16,6 +16,7 @@ type expr =
 	| NamedTuple of string*expr
 	| Tuple 	of int*expr
 	| TupleNode		of expr*expr
+	| TupleEnd
 	(*Functions *)
 	| NamedFun 	of string * string * expr * expr
 	| RecFun 	of string * string * expr * expr
@@ -50,6 +51,11 @@ type expr =
 	(**Inbuild function*)
 	| Print    of expr
 	| Sequencer of expr * expr
+	(*Conversions*)
+	| ToInt		of expr
+	| ToFloat		of expr
+	| ToBool		of expr
+	| ToString		of expr
 ;;
 
 let rec ident_in exp name =
@@ -63,6 +69,7 @@ let rec ident_in exp name =
 	| Float  _ -> false
 	| String _ -> false
 	| Atom _-> false
+	| TupleEnd -> false
     | Unify(a,b) -> ident_in a name || ident_in b name
     | UnifyExp(a,b,c)-> ident_in a name || ident_in b name|| ident_in c name
     | Node(a,b) -> ident_in a name|| ident_in b name
@@ -92,6 +99,10 @@ let rec ident_in exp name =
 	| Print e -> ident_in e name
 	| Sequencer(e1,e2) -> ident_in e1 name || ident_in e2 name
 	| Neg e				-> ident_in e name
+	| ToInt		e -> ident_in e name
+	| ToFloat	e -> ident_in e name
+	| ToBool	e -> ident_in e name
+	| ToString	e -> ident_in e name
 
 
 
@@ -127,6 +138,7 @@ let rec toString e count =
 		| TupleNode(a,b)	-> (toString a 0) ^ "," ^
 			(
 				match b with
+					| TupleEnd -> ")"
 					| TupleNode(a,c)	-> tupleToString b
 					| _			->	toString b 0
 			)
@@ -151,9 +163,10 @@ let rec toString e count =
 		| Int i 				-> string_of_int i
 		| Arr_End					-> "[]"
 		| Node(a,b)				-> (toString a 0) ^ "::" ^ (toString b 0)
-		| NamedTuple(n,e)			-> n ^ "(" ^ (toString e 0) ^")"
-		| Tuple(n,l)			-> (string_of_int n) ^ ":("^ (tupleToString l) ^ ")"
-		| TupleNode(a,b)				-> "(" ^ (tupleToString e) ^ ")"
+		| NamedTuple(n,e)			-> n ^ "(" ^ (toString e 0)
+		| Tuple(n,l)			-> (string_of_int n) ^ ":("^ (tupleToString l)
+		| TupleNode(a,b)				-> "(" ^ (tupleToString e)
+		| TupleEnd				-> ")"
 		| App (e1, e2) 			-> "(" ^ toString e1 0 ^ " : " ^ toString e2 0^ ")"
 		| Fun (x, b) 			-> "fun " ^ x ^ " -> \n" ^ toString b (count+1)
 		| Exp (b) 				-> "exp -> \n" ^ toString b (count+1)
@@ -180,6 +193,10 @@ let rec toString e count =
 		| UEnd			-> ""
 		| Print e -> "Print("^(toString e 0)^")"
 		| Sequencer(e1,e2) -> (toString e1 0) ^ "\n: " ^ (toString e2 0)
+	| ToInt		e -> "Int("^(toString e 0)^")"
+	| ToFloat	e -> "Float("^(toString e 0)^")"
+	| ToBool	e -> "Bool("^(toString e 0)^")"
+	| ToString e -> "String("^(toString e 0)^")"
   in
   (indenter count) ^ desc
 

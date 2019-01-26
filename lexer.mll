@@ -25,6 +25,10 @@
         | "match" -> MATCHEX
         | "with"  -> WITH
         | "print" -> PRINT
+        | "int"   -> TOINT
+        | "bool"   -> TOBOOL
+        | "float"   -> TOFLOAT
+        | "string"   -> TOSTRING
         | _ -> ATOM(lxm) }
     | ['A'-'Z']['a'-'z''A'-'Z']* as lxm {IDENT(lxm) }
     | ':'           {SEQUENCER}

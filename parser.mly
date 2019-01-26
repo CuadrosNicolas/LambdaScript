@@ -60,16 +60,22 @@
 %token ARRAY_END ARRAY_LINK
 %token SEQUENCER PRINT
 %token CONCAT
+%token TOINT
+%token TOFLOAT
+%token TOSTRING
+%token TOBOOL
 
 
 /* gestion des priorités/associativités */
+%right TOINT TOBOOL TOFLOAT TOSTRING
+%right  SEPARATOR ARRAY_LINK SEQUENCER ATOM
+%right TAIL HEAD
 %left EQ DIFF INF INFEQ SUP SUPEQ
 %left PLUS SUB
 %left MULT DIVIDE
-%left AND OR CONCAT
+%left AND OR CONCAT ATOM
 %right NOT
-%right TAIL HEAD
-%right  SEPARATOR ARRAY_LINK SEQUENCER ATOM
+
 
 
 %nonassoc DEFINITION
@@ -86,6 +92,10 @@
   expr:
   | simpleexpr                          { $1                        }
   | PRINT   expr             {Print $2}
+  | TOINT   expr                  {ToInt $2}
+  | TOFLOAT   expr                  {ToFloat $2}
+  | TOBOOL   expr                  {ToBool $2}
+  | TOSTRING   expr                  {ToString $2}
   | expr SEQUENCER expr      {Sequencer($1,$3)}
   | expr PLUS expr                   { Add($1,$3)                }
   | expr SUB expr                   { Sub($1,$3)                }
@@ -112,15 +122,15 @@
   | NAMEDFUN expr END_FUNCTION expr      {NamedExp(remove_end $1 1,$2,$4)}
 
   | IF expr THEN expr ELSE expr  END                         {Cond ($2,$4,$6)}
+  | ATOM LPAREN expr tuplenode RPAREN            {NamedTuple($1,Tuple(tuplelen (TupleNode($3,$4)),TupleNode($3,$4)))}
+  | ATOM LPAREN expr RPAREN            {NamedTuple($1,Tuple(1,TupleNode($3,TupleEnd)))}
+  | ATOM LPAREN RPAREN                        {Atom $1}
+  | expr tuplenode                               {Tuple(tuplelen (TupleNode($1,$2)),TupleNode($1,$2))}
   ;
 
   simpleexpr:
-    | ATOM LPAREN simpleexpr tuplenode RPAREN            {NamedTuple($1,Tuple(tuplelen (TupleNode($3,$4)),TupleNode($3,$4)))}
-    | ATOM LPAREN simpleexpr RPAREN            {NamedTuple($1,$3)}
-    | ATOM LPAREN RPAREN                        {Atom $1}
     | ATOM                                      {Atom $1}
     | FLOAT                               {Float $1}
-    | simpleexpr tuplenode                               {Tuple(tuplelen (TupleNode($1,$2)),TupleNode($1,$2))}
     | simpleexpr Llist       {Node($1,$2)}
     | STRING                              {String(toStr $1)}
     | ANY                                 {Any}
@@ -145,7 +155,7 @@
 
   tuplenode:
   | tuplenode tuplenode        {TupleNode($1,$2)}
-  | SEPARATOR simpleexpr        {$2}
+  | SEPARATOR expr        {$2}
 ;
   matchcond :
     | PIPE expr ARROW expr {($2,$4)}
