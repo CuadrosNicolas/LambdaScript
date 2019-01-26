@@ -14,4 +14,4 @@ Test\X,Y.
 	| _	-> "OUCH"
 ;
 
-print(Test 0 3)
+print(Rev 1::2::3::[])

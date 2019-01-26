@@ -37,7 +37,7 @@ last ./Examples/array.last
 
 ## Syntax of the language
 
-The language is inspired by OCaml, Prolog and python abut his syntax is mostly taken from OCaml.
+The language is inspired by OCaml, Prolog and python but his syntax is mostly taken from OCaml.
 
 ### Functional
 
