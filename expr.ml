@@ -112,30 +112,14 @@ let rec ident_in exp name =
 
 let rec buildUnifyStep l =
 		match l with
-		| (a,b,[])::tl ->
-						(
-							match a with
-								| _ 	-> UnifyExp(a,b,buildUnifyStep tl)
-						)
-		| (a,b,c::[])::tl ->
-						(
-							match a with
-								| _ 	-> UnifyExpCond(a,b,c,buildUnifyStep tl)
-						)
+		| (a,b,c::[])::tl -> UnifyExpCond(a,b,c,buildUnifyStep tl)
+		| (a,b,[])::tl ->  UnifyExp(a,b,buildUnifyStep tl)
 		| []		-> UEnd
 		| _			-> failwith "Parsing error"
 
 let buildUnify var l =
 	Unify (var,(buildUnifyStep l))
-let rec buildMatch var l =
-	match l with
-		| (a,b)::tl ->
-						(
-							match a with
-								| Any 	-> b
-								| _ 	-> Cond(Eq(var,a),b,buildMatch var tl)
-						)
-		| []		-> UEnd
+
 
 
 let rec indenter count =

@@ -104,7 +104,7 @@ let rec substVar  x v e =
 	| UnifyExpCond(a,b,c,d)->
         if ident_in a x
         then begin
-            UnifyExpCond(a,b,c,part c)
+            UnifyExpCond(a,b,c,part d)
         end
         else
             UnifyExpCond(a,part b,part c,part d)
@@ -224,14 +224,20 @@ let rec eval ex =
                 unificationOp var c
         | UnifyExpCond(a,b,c,d) ->
             let result = try_unify var a in
-            let cond = (eval b) in
-            if (not(result = [None]) && cond=(Bool true))
+            if (not(result = [None]))
             then
-                subAll result c
+               (
+                let cond = (eval (subAll result b)) in
+                 if(cond=(Bool true))
+                 then
+                    subAll result c
+                else
+                    unificationOp var d
+                )
             else
                 unificationOp var d
         | UEnd -> failwith "Erreur, pattern non capturé"
-        | _    -> failwith "?"
+        | _    -> print_exp pattern;failwith "OUCH"
     in
     let boolCompare a b op =
             match (eval a,  eval b) with
@@ -362,7 +368,7 @@ let rec eval ex =
         )
     | Sup (e1,e2) ->
         (
-            match (e1,e2) with
+            match (eval e1,eval e2) with
             | (Bool a,Bool b) -> Bool( a> b )
             | (Int a,Int b) ->  Bool( a> b )
             | (Float a,Float b) ->  Bool( a>b)

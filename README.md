@@ -19,7 +19,7 @@ https://ocaml.org/docs/install.html
 
 ### Building the intrepeter
 
-For testing the language you juste need to use make to build the intrepeter from the sources :
+For testing the language you just need to use make to build the intrepeter from the sources :
 
 ```bash
 git clone https://github.com/CuadrosNicolas/LambdaScript
@@ -102,7 +102,7 @@ Pattern matching work exactly like OCaml but only one difference, you can specif
 Will print false, since the composant of a(1,2) are not the same.
 You can use the '_' to specify an any value to match everything.
 
-Post condition are also available, these condition need to be verfied after the
+Post condition are also available, these condition need to be verified after the
 matching in order to evaluate the expression.
 
 ![alt text](Ressources/example_postcond.png "Pattern matching poscondition")

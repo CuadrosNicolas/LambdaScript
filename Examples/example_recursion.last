@@ -8,10 +8,17 @@ Rev\X.
 	RevAppend X []
 ;
 
-Test\X,Y.
+Ackermann@\X.
 	unify X with
-	| 0 :- Y>2 -> 1
-	| _	-> "OUCH"
+		| (0,N) -> N+1
+		| (M,N) :- ((M>0) && (N>0)) -> Ackermann (M-1,Ackermann (M,N-1))
+		| (M,N) :- M>0 -> Ackermann (M-1,1)
 ;
 
-print(Rev 1::2::3::[])
+Fib@\X,A,B.
+	unify X with
+	| H :- X>0 -> (Fib (X-1) B (A+B))
+	| 0 -> A
+;
+
+print(Ackermann (2,2))
